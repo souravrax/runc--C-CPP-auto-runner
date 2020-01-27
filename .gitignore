@@ -3,6 +3,7 @@
 *.cpp
 *.exe
 *.out
+input.txt
 
 ## Excluded directories
 

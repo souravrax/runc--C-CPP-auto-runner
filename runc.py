@@ -10,38 +10,42 @@ with open('./config.json') as f:
     data = json.load(f)
 
 
-def open_file(file_path, delete):
+def open_file(file_path, args):
     while not os.path.exists(file_path):
         time.sleep(1)
 
     if os.path.isfile(file_path):
-        print("2) Successfully compiled :-)\n3) Opening the file...")
-        print("=" * 70)
-        print("")
-        open_file = "./" + file_path
-        subprocess.call([open_file])
-        if delete:
+        print("runc.py: Opening " + file_path + " ...")
+        relative_file = "./" + file_path
+        command = [relative_file]
+        if args.infile:
+            command.extend(["<", str(args.infile)])
+
+        final_command = " ".join(command)  # To be able to run all at once
+
+        print("Running : {}".format(final_command))
+        print("*" * 70)
+
+        # Making shell=True to be able to feed the input file into the binary file
+        subprocess.call(final_command, shell=True)
+        if args.delete:
             subprocess.call(["rm", file_path])
     else:
         raise ValueError("%s isn't a file!" % file_path)
 
 
 def compile_and_run(args):
-    print("1) Compiling " + args.input + " ... ")
     time.sleep(0.5)
-    command = ["g++", args.input]
-    output = "a.exe"
+    output = (str(args.input)).split(".")[0]
     if args.out:
         output = str(args.out)
-        command.extend(["-o", str(args.out)])
 
+    command = ["g++", args.input, "-o", output]
+
+    print("Running : {}".format(" ".join(command)))
     subprocess.call(command)
-    open_file(output, args.delete)
-
-    # if args.out and not args.using and not args.inf:
-    #     subprocess.call(["g++", str(args.input), ])
-    #     open_file((str(args.out) + ".exe"))
-    # else:
+    # Calling open_file to open the file with given parameters
+    open_file(output, args)
 
 
 if __name__ == "__main__":
@@ -53,8 +57,9 @@ if __name__ == "__main__":
                         version=data["__name__"] + " : " + data["__version__"])
     parser.add_argument(
         '-u', "--using", help="Specify the compiler version", choices=[11, 14], type=int)
-    parser.add_argument("-i", "--inf", help="Give the input file", type=str)
-    parser.add_argument("-d", "--delete", help="Don't keep the output file", action="store_true")
+    parser.add_argument("-i", "--infile", help="Give the input file")
+    parser.add_argument(
+        "-d", "--delete", help="Don't keep the output file", action="store_true")
 
     args = parser.parse_args()
     compile_and_run(args)
