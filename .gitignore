@@ -1,1 +1,9 @@
+##Excluded file extensions
+
 *.cpp
+*.exe
+*.out
+
+## Excluded directories
+
+/outputs
