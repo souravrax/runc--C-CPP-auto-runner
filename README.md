@@ -1,1 +1,2 @@
-# runc--C-CPP-auto-runner
+# runc
+## A C/C++ auto runner cli tool made with python
