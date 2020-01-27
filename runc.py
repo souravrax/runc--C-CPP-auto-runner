@@ -6,7 +6,7 @@ import time
 import json
 
 
-with open('./config.json') as f:
+with open('C:/Users/Sourav/Desktop/shell/Argparse/runc--C-CPP-auto-runner/config.json') as f:
     data = json.load(f)
 
 
