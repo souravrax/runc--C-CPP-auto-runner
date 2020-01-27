@@ -5,35 +5,43 @@ import os.path
 import time
 import json
 
-# main()
 
 with open('./config.json') as f:
     data = json.load(f)
 
 
-def open_file(file_path):
+def open_file(file_path, delete):
     while not os.path.exists(file_path):
         time.sleep(1)
 
     if os.path.isfile(file_path):
-        print("Successfully compiled :-)\nOpening the file...")
+        print("2) Successfully compiled :-)\n3) Opening the file...")
         print("=" * 70)
-        print()
+        print("")
         open_file = "./" + file_path
         subprocess.call([open_file])
+        if delete:
+            subprocess.call(["rm", file_path])
     else:
         raise ValueError("%s isn't a file!" % file_path)
 
 
 def compile_and_run(args):
-    print("Compiling " + args.input + " ... ")
+    print("1) Compiling " + args.input + " ... ")
     time.sleep(0.5)
+    command = ["g++", args.input]
+    output = "a.exe"
     if args.out:
-        subprocess.call(["g++", str(args.input), "-o", str(args.out)])
-        open_file((str(args.out) + ".exe"))
-    else:
-        subprocess.call(["g++", args.input])
-        open_file("a.exe")
+        output = str(args.out)
+        command.extend(["-o", str(args.out)])
+
+    subprocess.call(command)
+    open_file(output, args.delete)
+
+    # if args.out and not args.using and not args.inf:
+    #     subprocess.call(["g++", str(args.input), ])
+    #     open_file((str(args.out) + ".exe"))
+    # else:
 
 
 if __name__ == "__main__":
@@ -45,7 +53,8 @@ if __name__ == "__main__":
                         version=data["__name__"] + " : " + data["__version__"])
     parser.add_argument(
         '-u', "--using", help="Specify the compiler version", choices=[11, 14], type=int)
-    parser.add_argument("-i", "--in", help="Give the input file", type=str)
+    parser.add_argument("-i", "--inf", help="Give the input file", type=str)
+    parser.add_argument("-d", "--delete", help="Don't keep the output file", action="store_true")
 
     args = parser.parse_args()
     compile_and_run(args)
