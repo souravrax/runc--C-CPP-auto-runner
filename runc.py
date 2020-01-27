@@ -5,6 +5,8 @@ import os.path
 import time
 import json
 
+# main()
+
 with open('./config.json') as f:
     data = json.load(f)
 
@@ -23,24 +25,27 @@ def open_file(file_path):
         raise ValueError("%s isn't a file!" % file_path)
 
 
-parser = argparse.ArgumentParser(description=data["__description__"])
-parser.add_argument("input", help="Name of the c++ file")
-parser.add_argument(
-    "-o", "--out", help="Specify the compiled file's name")
-parser.add_argument('-V','--version', action='version', version=data["__name__"] + " : " + data["__version__"])
+def compile_and_run(args):
+    print("Compiling " + args.input + " ... ")
+    time.sleep(0.5)
+    if args.out:
+        subprocess.call(["g++", str(args.input), "-o", str(args.out)])
+        open_file((str(args.out) + ".exe"))
+    else:
+        subprocess.call(["g++", args.input])
+        open_file("a.exe")
 
 
-# parser.add_argument()
-# parser.add_argument("-u", "--upgrade",help="Upgrade the C++ compiler", default="11")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=data["__description__"])
+    parser.add_argument("input", help="Name of the c++ file")
+    parser.add_argument(
+        "-o", "--out", help="Specify the compiled file's name")
+    parser.add_argument('-V', '--version', action='version',
+                        version=data["__name__"] + " : " + data["__version__"])
+    parser.add_argument(
+        '-u', "--using", help="Specify the compiler version", choices=[11, 14], type=int)
+    parser.add_argument("-i", "--in", help="Give the input file", type=str)
 
-
-args = parser.parse_args()
-
-print("Compiling " + args.input + " ... ")
-time.sleep(0.5)
-if args.out:
-    subprocess.call(["g++", str(args.input), "-o", str(args.out)])
-    open_file((str(args.out) + ".exe"))
-else:
-    subprocess.call(["g++", args.input])
-    open_file("a.exe")
+    args = parser.parse_args()
+    compile_and_run(args)
