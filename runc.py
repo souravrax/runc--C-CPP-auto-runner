@@ -24,7 +24,7 @@ def open_file(file_path):
 
 
 parser = argparse.ArgumentParser(description=data["__description__"])
-# parser.add_argument("input", help="Name of the c++ file")
+parser.add_argument("input", help="Name of the c++ file")
 parser.add_argument(
     "-o", "--out", help="Specify the compiled file's name")
 parser.add_argument('-V','--version', action='version', version=data["__name__"] + " : " + data["__version__"])
